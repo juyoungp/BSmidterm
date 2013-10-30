@@ -211,7 +211,18 @@
       //user socket part-----------------------------------------------------------------------
       //obamaP, stevejobsP, ladygagaP, danielshiffmanP, nickiminajP, spongebobP, img6, img7, img8, img9, stevejobs0; 
   
-      var nameList = ["obama","stevejobs","spongebob","ladygaga","danielshiffman","nickiminaj","marilynmonroe"];
+      //var nameList = ["obama","stevejobs","spongebob","ladygaga","danielshiffman","nickiminaj","marilynmonroe"];
+
+      var nameList = [
+        {name: "obama", url:"http://itp.nyu.edu/~jj1357/characters/ObamaF.jpg"},
+        {name: "stevejobs", url: "http://itp.nyu.edu/~jj1357/characters/stevejobsF.jpg"},
+        {name: "ladygaga", url: "http://itp.nyu.edu/~jj1357/characters/ladygagaF.jpg"},
+        {name: "danielshiffman", url: "http://itp.nyu.edu/~jj1357/characters/danielshiffmanF.jpg"},
+        {name: "nickiminaj", url: "http://itp.nyu.edu/~jj1357/characters/nickiminajF.jpg"},
+        {name: "spongebob", url: "http://itp.nyu.edu/~jj1357/characters/spongebobF.jpg"},
+        {name: "marilynmonroe", url: "http://itp.nyu.edu/~jj1357/characters/marilynmonroeF.jpg"}
+      ];
+
       var isAssigned = false;
 
       var userInit = function(){
@@ -226,7 +237,7 @@
           //console.log("changed userInput: "+userInput);
           
           for(var i = 0; i < nameList.length ; i ++ ){
-            if(userInput == nameList[i]){
+            if(userInput == nameList[i].name){
               isAssigned = true;
             }
           }
@@ -252,6 +263,16 @@
       };
       var register = function( data ){
           socket.emit('character', { id: id, character: data }); 
+          for(var i = 0; i < nameList.length ; i ++ ){
+            if(data == nameList[i].name){
+               document.getElementById("idphoto").setAttribute("src",nameList[i].url);
+               var temptString = "Hey, "+nameList[i].name+"! Run away!!";
+               console.log(temptString);
+               document.getElementById("greeting").innerHTML = temptString;
+            
+            }
+          }
+          
           gameplay();
       };
       var gameplay = function(){
@@ -287,10 +308,10 @@
   </head>
   <body onload = "init();">
 
-    <audio loop id = "scream">
+    <audio id = "scream">
         <source src = "http://itp.nyu.edu/~jyp323/ju/wp-content/uploads/2013/10/180350__jorickhoofd__scream-noooh.wav" type = "audio/wav">
     </audio>
-    <audio id = "bgm">
+    <audio loop id = "bgm">
        <source src ="http://itp.nyu.edu/~jyp323/ju/wp-content/uploads/2013/10/Tetris-8-bit-Music-Tetris-Theme-Song.mp3" type = "audio/mp3">
     </audio>
 
@@ -308,21 +329,24 @@
         <br/>
         <button id="purple" onclick= "setKillSection(3);"><h1>3</h1></button>
     </div>
-    <div class = "container" id = "inputbox" style = "display:none">
-        <h3 id = "command">Put your ID on the name card!</h3>
-        <input id="username" type="text" placeholder="ex)Obama" />
-        <input type="submit" id="btnSubmit" class="btn" value="Submit" onclick = "nameCheck();"/>
-    </div>
+    <div id = "page-wrap">
+      <div class = "container" id = "inputbox" style = "display:none">
+          <h2 id = "command">PUT YOUR PLAYER ID!</h2>
+          <h5 id = "command">Player ID is on the name card you gained.</h5>
+          <input id="username" type="text" placeholder="player ID" />
+          <input type="submit" id="btnSubmit" class="btn" value="Submit" onclick = "nameCheck();"/>
+      </div>
 
-    <div class = "container" id = "gui" style = "display:none">        
-        <div id = "debug"><h3>Choose a land of survival!</h3></div>
-        <button id="red" onclick= "sendbtn(1);"></button>
-        <br/>
-        <button id="yellow" onclick= "sendbtn(2);"></button>
-        <br/>
-        <button id="purple" onclick= "sendbtn(3);"></button>
+      <div class = "container" id = "gui" style = "display:none"> 
+          <img id = "idphoto" width = "80px" />
+          <div id = "debug"><h3 id = "greeting"></h3></div>
+          <button id="red" onclick= "sendbtn(1);"></button>
+          <br/>
+          <button id="yellow" onclick= "sendbtn(2);"></button>
+          <br/>
+          <button id="purple" onclick= "sendbtn(3);"></button>
+      </div>
     </div>
-    
     <canvas id = "thecanvas" style = "display:none" data-processing-sources="/pjs/display.pde"></canvas>
   
   </body>

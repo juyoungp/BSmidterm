@@ -22,6 +22,7 @@ textarea {
   margin: 0;
   font-size: 100%;
   vertical-align: middle;
+  background: paleturquoise;
 }
 button,
 input {
@@ -68,84 +69,100 @@ textarea {
   vertical-align: top;
 }
 
+#page-wrap { 
+  width: 548px; 
+  margin: 40px auto;
+}
 
-    #red {
+#inputbox{
+  width: 320px;
+  height: 480px;
+  padding-top: 30px;
+}
 
-        border-radius: 20px;
-        border-style: outset;
-        border-width: 5px;
-        border-color: #CCFFCC;
-        margin: 10px;
-        padding-top: 10px;
-        padding-bottom: 10px;
-        width: 196px;
-        height: 120px;
-        background-color: #e92319;
+#red {
+
+  border-radius: 20px;
+  border-style: outset;
+  border-width: 5px;
+  border-color: #CCFFCC;
+  margin: 0;
+  margin-top: 30px;
+  margin-left: 30px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  width: 140;
+  height: 196;
+  background-color: #e92319;
+  float: left;
   
+}
+
+#yellow {
+
+  border-radius: 20px;
+  border-style: outset;
+  border-width: 5px;
+  border-color: #CCFFCC;
+  margin: 0;
+  margin-top: 30px;
+  margin-left: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  width: 140;
+  height: 196;
+  background-color: #FFCC00;
+  float: left;
+  position: relative;
+
+}
+
+#purple {
+
+  border-radius: 20px;
+  border-style: outset;
+  border-width: 5px;
+  border-color: #CCFFCC;
+  margin: 0;
+  margin-top: 30px;
+  margin-left: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  width: 140;
+  height: 196;
+  background-color: #660066;
+  float: left;
+  position: relative;
+
+}
+
+#debug {
+
+        margin-top: 30;
+        padding-left: 20;
+        padding-top: 15;
+        padding-bottom: 13;
+        padding-right: 20;
+        float: left;
+        position: relative;
+        background: gray;
+        color: white;
+        width: 338px;
+}
+
+    #command {
+        margin-top: 5px;
+        margin-bottom: 5px;
     }
 
-    #red:hover {
-    
-        background-color: #8C150F;
-        border-color: #e92319;
-    }
 
-    #yellow {
-
-        border-radius: 20px;
-        border-style: outset;
-        border-width: 5px;
-        border-color: #CCFFCC;
-        margin: 10px;
-        padding-top: 10px;
-        padding-bottom: 10px;
-        width: 196px;
-        height: 120px;
-        background-color: #FFCC00;
-    }
-
-    #yellow:hover {
-
-        background-color: #FF6600;
-        border-color: #FFCC00;
-      
-    
-    }
-
-    #purple {
-
-        border-radius: 20px;
-        border-style: outset;
-        border-width: 5px;
-        border-color: #CCFFCC;
-        margin: 10px;
-        padding-top: 10px;
-        padding-bottom: 10px;
-        width: 196px;
-        height: 120px;
-        background-color: #660066;
+    #idphoto {
   
+        float: left;
+        padding-left: 30;
+        padding-top: 30;
+     
     }
-
-    #purple:hover {
-
-        background-color: #330033;
-        border-color: #660066;
-
-    }
-
-    #debug {
-
-        margin: 10px;
-        padding-top: 10px;
-        padding-bottom: 10px;
-        height: 30px;
-    }
-
-
-
-
-
 
 
 
