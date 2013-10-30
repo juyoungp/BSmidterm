@@ -80,10 +80,7 @@ io.sockets.on('connection',
     }else if(users.length >= 5){
       socket.set('id', 'user', function(){
           console.log("user : "+ (users.length-4));
-         // io.sockets.socket(display_socket_0).emit('news', { uid: socket.id, index: users.length-1, uType: 'user'});
-         // io.sockets.socket(display_socket_1).emit('news', { uid: socket.id, index: users.length-1, uType: 'user'});
-         // io.sockets.socket(display_socket_2).emit('news', { uid: socket.id, index: users.length-1, uType: 'user'});
-         socket.emit('news', { uid: socket.id, index: users.length-1, uType: 'user'});         
+          socket.emit('news', { uid: socket.id, index: users.length-1, uType: 'user'});         
     
       }); 
     }
@@ -94,7 +91,7 @@ io.sockets.on('connection',
 
           if(typeID == 'controller'){
 
-               socket.on('button', function (data) {
+            socket.on('button', function (data) {
 
                //console.log('button in app.js: ',data);
                io.sockets.socket(display_socket_0).emit('button', { uType: 'controller', button: data.button});
@@ -102,7 +99,8 @@ io.sockets.on('connection',
                io.sockets.socket(display_socket_2).emit('button', { uType: 'controller', button: data.button});
   
             });
-          };
+          }
+
           socket.on('message', function (data) {
 
             console.log('message',data);
@@ -131,6 +129,12 @@ io.sockets.on('connection',
 
             io.sockets.socket(data).emit('message',"You've got killed");
 
+          });
+
+          socket.on("setKill", function (data){
+            io.sockets.socket(display_socket_0).emit('setKill', data);
+            io.sockets.socket(display_socket_1).emit('setKill', data);
+            io.sockets.socket(display_socket_2).emit('setKill', data);
           });
 
           socket.on('disconnect', function (data) {

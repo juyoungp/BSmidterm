@@ -1,47 +1,22 @@
-/*var  VerletPhysics2D = toxi.physics2d.VerletPhysics2D,
-     VerletParticle2D = toxi.physics2d.VerletParticle2D,
-     AttractionBehavior = toxi.physics2d.behaviors.AttractionBehavior,
-     GravityBehavior = toxi.physics2d.behaviors.GravityBehavior,
-     Vec2D = toxi.geom.Vec2D,
-     Rect = toxi.geom.Rect;
-
-  import toxi.geom.*;
-  import toxi.physics2d.*;
-  import toxi.physics2d.behaviors.*;
-  
-  
-  VerletPhysics2D physics;
-  VerletPhysics2D target1;
-  VerletPhysics2D target2;
-  VerletPhysics2D target3;
-  AttractionBehavior mouseAttractor;
-  AttractionBehavior attractorSec1;
-  AttractionBehavior attractorSec2; 
-  AttractionBehavior attractorSec3;
-  //String characterId;
-*/
   HashMap userMap;
   Iterator i; 
-  PVector target1, target2, target3;
-  //Vec2D core;  
+  PVector randLoc, target1, target2, target3;
+   
   int margin = 100;
   int tempIndex;
   int t;
-  //float easing = 0.05;
+  
+  Boolean controllerOn = false;
   Boolean moveToSec1 = false;
   Boolean moveToSec2 = false;
   Boolean moveToSec3 = false;
   ArrayList<String> namelist;
   ArrayList<Particle> particles;
-  PImage obamaP, stevejobsP, ladygagaP, danielshiffmanP, nickiminajP, spongebobP, marilynmonroeP, img7, img8, img9, stevejobs0; 
-  PImage hand;
+  PImage obamaP, stevejobsP, ladygagaP, danielshiffmanP, nickiminajP, spongebobP, marilynmonroeP, handP; 
+  
   void setup() {
     size(11520, 1080);
-    //frameRate(50);
-    // setup physics with 10% drag
-    //physics = new VerletPhysics2D();
-    //physics.setDrag(0.05);
-    //physics.setWorldBounds(new Rect(margin, margin, width-margin, height-margin));
+ 
     userMap = new HashMap();
     imagelist = new ArrayList<PImage>();
     namelist = new ArrayList<String>();
@@ -54,7 +29,7 @@
     nickiminajP = loadImage("http://itp.nyu.edu/~jj1357/characters/nickiminajF.jpg");
     spongebobP = loadImage("http://itp.nyu.edu/~jj1357/characters/spongebobF.jpg");
     marilynmonroeP = loadImage("http://itp.nyu.edu/~jj1357/characters/marilynmonroeF.jpg");
-    hand = loadImage("http://itp.nyu.edu/~jj1357/characters/hand-shadow.png");
+    handP = loadImage("http://itp.nyu.edu/~jj1357/characters/hand-shadow.png");
 
     displayText1 = "bit.ly/chooseordie";
     displayText2 = "bit.ly/chooseordie";
@@ -64,47 +39,25 @@
     
     }
 
-  void displayHand(String id){
-
-     userMap.put(id, 99999);
-     
-
-
-  }  
-
   void addParticle(String id, String characterName) {
 
-   //Vec2D randLoc = Vec2D.randomVector().scale(5).addSelf(width / 2, height/2);
-   PVector randLoc = new PVector(width/2, height/2);
-   //VerletParticle2D p = new VerletParticle2D(randLoc, 30);
-   //float randx = random(200, width-200);
-   //PVector p = new PVector(randLoc.x, 30);
-   Particle p = new Particle(randLoc.x, randLoc.y);
-   particles.add(p);
-   //console.log("Paricle number = "+physics.particles.length+","+id);
-   //console.log(particles.size());
-   userMap.put(id, (particles.size()));
-   //console.log("HashMap: " +userMap.size());
-    characterId = characterName;
-    //core = randLoc;
-    //natureF = new AttractionBehavior(core, 5, -1.2, 0.01);
-    //physics.addBehavior(natureF);
+    if(characterName.equals("hand") == true){
 
-    namelist.add(characterName);
-    console.log("processing says: "+ characterName);
+      console.log("processing - controller is on!");
+      controllerOn = true;
+
+    }else{
+
+      particles.add(new Particle(random(3840, 7680), height/2));
+      userMap.put(id, (particles.size()));
+      namelist.add(characterName);
+    
+    }
   }
 
   void setSection(String id, int sectionID) {
  
 
-    //Vec2D sec1loc = Vec2D.randomVector().scale(5).addSelf(width / 6, height/2);
-    //Vec2D sec2loc = Vec2D.randomVector().scale(5).addSelf(width / 2, height/2);
-    //Vec2D sec3loc = Vec2D.randomVector().scale(5).addSelf(width*5 / 6, height/2);
-    
-
-   
-    //VerletParticle2D tempP;
-    //Particle tempP;
     
     i = userMap.entrySet().iterator();  // Get an iterator
     
@@ -119,37 +72,20 @@
      }   
 
       if(sectionID == 1){
-
-          //core = sec1loc;
-          //natureF = new AttractionBehavior(core, 5, -1.2, 0.01);
-          
-
-          //physics.addBehavior(natureF);
-          
+      
           moveToSec1 = true;
           moveToSec2 = false;
           moveToSec3 = false;
          
 
-      }else if(sectionID == 2){
+      } else if(sectionID == 2){
 
-          //core = sec2loc;
-          //natureF = new AttractionBehavior(core, 5, -1.2, 0.01);
-
-
-          //physics.addBehavior(natureF);
-          
           moveToSec1 = false;
           moveToSec2 = true;
           moveToSec3 = false;
           
-      }else if(sectionID == 3){
+      } else if(sectionID == 3){
 
-          //core = sec3loc;
-          //natureF = new AttractionBehavior(core, 5, -1.2, 0.01);
-          
-          //physics.addBehavior(natureF);
-          
           moveToSec1 = false;
           moveToSec2 = false;
           moveToSec3 = true;
@@ -157,10 +93,8 @@
          
       } 
 
-      //console.log("Processing = User id: " + id +" , section: "+sectionID);
-      //moveToSec1 = false;
-      //moveToSec2 = false;
-      //moveToSec3 = false;
+
+
 
   }
 
@@ -193,15 +127,9 @@
 
 
     //physics.update();
-    /*
-      if(moveToSec1){
-        particles.get(tempIndex-1).move(target1.x, target1.y);
-      } else(moveToSec2){
-        particles.get(tempIndex-1).move(target2.x, target2.y);
-      } else(moveToSec3){
-        particles.get(tempIndex-1).move(target3.x, target3.y);
-      }
-    */
+    
+
+    
 
 
     i = userMap.entrySet().iterator();  // Get an iterator
@@ -210,44 +138,61 @@
       Map.Entry me = (Map.Entry)i.next();
      
         drawUsers(me.getValue()); 
-      
-      
+     
           
+    }
+
+    if(moveToSec1){
+      particles.get(tempIndex-1).move(random(0, 3840), height/2);
+    } else if (moveToSec2){
+      particles.get(tempIndex-1).move(random(3840, 7680), height/2);
+    } else if(moveToSec3){
+      particles.get(tempIndex-1).move(random(7680, 11520), height/2);
+    }
+
+    if(controllerOn){
+      displayHand();
     }
 
 
  }
 
-  void drawUsers(int index){
+ void displayHand (){
 
-      //VerletParticle2D tempP = physics.particles[index-1];
-      //Particle tempP = particles.get(index-1);
- 
       fill(255);
 
       if(moveToSec1){
         target1 = new PVector(random(0, 3840), height/2);
         particles.get(tempIndex-1).move(target1.x, target1.y);
-        //image(getCharImage(namelist.get(index-1)), particles.get(index-1).getX(), particles.get(index-1).getY(), 150, 150);
-
+        
       } 
 
       if(moveToSec2){
         target2 = new PVector(random(3840, 7680), height/2);
         particles.get(tempIndex-1).move(target2.x, target2.y);
-        //image(getCharImage(namelist.get(index-1)), particles.get(index-1).getX(), particles.get(index-1).getY(), 150, 150);
-
+       
       } 
 
       if(moveToSec3){
         target3 = new PVector(random(7680, 11520), height/2);
         particles.get(tempIndex-1).move(target3.x, target3.y);
-        //image(getCharImage(namelist.get(index-1)), particles.get(index-1).getX(), particles.get(index-1).getY(), 150, 150);
-
+        
       } 
-        image(getCharImage(namelist.get(index-1)), particles.get(index-1).getX(), particles.get(index-1).getY(), 150, 150);
+
+      image(getCharImage("hand"), width/2, height/2, 700, 800);
 
 
+      fill(255,120,120);
+      textSize(20);
+      
+  }
+
+  void drawUsers(int index){
+
+
+      fill(255);
+
+      image(getCharImage(namelist.get(index-1)), particles.get(index-1).getX(), particles.get(index-1).getY(), 150, 150);
 
       fill(255,120,120);
       textSize(20);
@@ -287,10 +232,14 @@
         
       } else if(name.equals("spongebob") == true){
         return spongebobP;
-      
+        
       } else if(name.equals("marilynmonroe") == true){
         return marilynmonroeP;
-      } 
+      
+      } else if(name.equals("hand") == true){
+        return handP;
+        
+      }
 
   }
 
@@ -300,7 +249,7 @@ class Particle{
   float loc_x;
   float loc_y;
   float tx, ty;
-  float easing = 0.05;
+  float easing = 0.03;
   
   Particle(float x, float y){
     loc_x = x;
@@ -311,7 +260,7 @@ class Particle{
 
 
   void move(float _tx, float _ty){
-    tx = _ty; 
+    tx = _tx; 
     ty = _ty;
 
     float dx = tx - loc_x;

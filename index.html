@@ -58,7 +58,7 @@
             displayCanvas();
         }else if(data.uType == 'controller'){
             controllerID = data.uid;
-            displayController();
+            displayController(data);
         }else if(data.uType == 'user'){
             userInit();
         }
@@ -88,52 +88,101 @@
             move(data);
           } 
         } 
-        if(data.uType == 'controller'){
+       if(data.uType == 'controller'){
           //console.log(data);
-
-          for(var i = 0 ; i < userObjs.length; i++){
-            if(userObjs[i].sectionID == data.button){
-              deathnote.push(userObjs[i].objectID);  
-            //console.log("find the moving user!: " + userObjs[i].sectionID);
-            deathland = data.button;
-            } 
-          } 
-          kill(deathland);
-          deathnote = [];
-          console.log(deathnote.length);
+          moveController(data.button);
         }
+      });
+
+      socket.on('setKill', function (data){
+        checkKillSection(data.sectionID);
       });
 
       socket.on('character', function (data){
 
-        //console.log("in socket.on('character') : " + data.id+", "+data.character);
-        userObj = {
+        console.log("in socket/character " + data.id + " , " + data.character);
+        if(data.character == "hand"){
+          console.log("controller process is on!");
+          var pjs = Processing.getInstanceById("thecanvas");   
+          pjs.addParticle(data.id, data.character);    
 
-          objectID : data.id,
-          objectIndex : userObjs.length,
-          sectionID : 2,
-          character : data.character
-        };
+        }else{
+          //console.log("in socket.on('character') : " + data.id+", "+data.character);
+          userObj = {
 
-        userObjs.push(userObj);
+            objectID : data.id,
+            objectIndex : userObjs.length,
+            sectionID : 2,
+            character : data.character
+          };
 
-        var pjs = Processing.getInstanceById("thecanvas");          
-        pjs.addParticle(userObj.objectID, userObj.character);
-
+          userObjs.push(userObj);
+        
+          var pjs = Processing.getInstanceById("thecanvas");          
+          pjs.addParticle(userObj.objectID, userObj.character);
+        }
       });
 
       //display socket part--------------------------------------------------------------------
 
       var displayCanvas = function(){
         canvas.style.display = "inline";
-        //document.getElementById("gui").style.display = "none"; 
       };      
 
       //controller socket part-----------------------------------------------------------------
 
-      var displayController = function(){
-          console.log("I'm the controller!");
-          document.getElementById("debug").innerHTML = "You're the controller!";
+      var displayController = function(data){
+        console.log("I'm the controller!");
+        document.getElementById("controllerGUI").style.display = "inline"; 
+
+        socket.emit('character', { id: id, character: "hand" }); 
+           //var pjs = Processing.getInstanceById("thecanvas");   
+        //pjs.addParticle(data.uid, "hand");
+
+      };
+      var moveController = function(){
+          move();
+      };
+
+      var setKillSection = function (data) {
+        socket.emit('setKill', { uType: "controller", sectionID: data });
+      };
+      var checkKillSection = function( data ){
+
+        console.log("setKillSection : " +data +","+userObjs.length);
+        for(var i = 0 ; i < userObjs.length; i++){
+          //console.log("user's sectionID : "+userObjs[i].sectionID);
+          if(userObjs[i].sectionID == data){
+              deathnote.push(userObjs[i].objectID);  
+            console.log("You will be killed: " + userObjs[i].sectionID);
+            deathland = data;
+            } 
+          kill(deathland);
+          deathnote = [];
+        }   
+      };
+      var kill = function (sectionID){
+          if(sectionID == 1){
+               displayText1 = "BOOM!!"
+          }else if(sectionID == 2){
+               displayText2 = "BOOM!!" 
+          }else if(sectionID == 3){
+               displayText3 = "BOOM!!"
+          }
+
+          //scream.play();
+
+          for(var i = 0 ; i < deathnote.length; i++){
+            removeUser(deathnote[i]);
+            socket.emit('kill',deathnote[i]);
+            console.log("deathnote : "+ deathnote[i]);
+
+          }
+          setInterval(function(){
+                displayText1 = "bit.ly/chooseordie";
+                displayText2 = "bit.ly/chooseordie";
+                displayText3 = "bit.ly/chooseordie";
+          }, 1000);
       };
 
       //user socket part-----------------------------------------------------------------------
@@ -163,13 +212,11 @@
           }else{
               nameCheck_failure();
           }
-
       };
 
       function removeSpaces(string) {
         return string.split(' ').join('');
       }
-
       var nameCheck_failure = function(){
           //console.log("Fail!!");
           document.getElementById("command").innerHTML = "You put the wrong name!";
@@ -192,11 +239,9 @@
 
 
       };
-
       var sendbtn = function(button) {
         socket.emit('button', { id: id, button: button });
       };
-
       var move = function (data){
         var choice = {
              objectID : data.id,
@@ -205,7 +250,6 @@
         var pjs = Processing.getInstanceById("thecanvas");          
         pjs.setSection(choice.objectID, choice.sectionID);
       };
-
       var removeUser = function(data){
         for(var i = 0 ; i < userObjs.length ; i++){
           if(userObjs[i].objectID == data){
@@ -220,19 +264,32 @@
   </head>
   <body onload = "init();">
 
-    <audio id="scream">
+    <audio id = "scream">
         <source src = 'http://itp.nyu.edu/~jyp323/ju/wp-content/uploads/2013/10/180350__jorickhoofd__scream-noooh.wav' type= 'audio/wav'>
     </audio>
  
-    <div class="container" id = "gui" style = "display:none">        
-        <div id="debug"><h3>Choose a land of survival!</h3></div>
+    <div class = "container" id = "gui" style = "display:none">        
+        <div id = "debug"><h3>Choose a land of survival!</h3></div>
         <button id="red" onclick= "sendbtn(1);"></button>
         <br/>
         <button id="yellow" onclick= "sendbtn(2);"></button>
         <br/>
         <button id="purple" onclick= "sendbtn(3);"></button>
     </div>
-
+    <div class = "container" id = "controllerGUI" style = "display:none">
+        <div id = "debug"><h3>These buttons are for moving</h3></div>
+        <button id="red" onclick= "sendbtn(1);"></button>
+        <br/>
+        <button id="yellow" onclick= "sendbtn(2);"></button>
+        <br/>
+        <button id="purple" onclick= "sendbtn(3);"></button>
+        <div id = "debug"><h3>These buttons are for killing</h3></div>
+        <button id="red" onclick= "setKillSection(1);"><h1>1</h1></button>
+        <br/>
+        <button id="yellow" onclick= "setKillSection(2);"><h1>2</h1></button>
+        <br/>
+        <button id="purple" onclick= "setKillSection(3);"><h1>3</h1></button>
+    </div>
     <div class = "container" id = "inputbox" style = "display:none">
         <h3 id = "command">Put your ID on the name card!</h3>
         <input id="username" type="text" placeholder="ex)Obama" />
