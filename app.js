@@ -74,6 +74,7 @@ io.sockets.on('connection',
         console.log("Controller is connected : "+socket.id);
         controller = users[3];
         io.sockets.socket(controller).emit('news', { uid: socket.id, index: users.length-1, uType: 'controller'});
+        io.sockets.socket(display_socket_0).emit('playAudio', {music: 'bgm'});
         
 
       });
@@ -135,6 +136,9 @@ io.sockets.on('connection',
             io.sockets.socket(display_socket_0).emit('setKill', data);
             io.sockets.socket(display_socket_1).emit('setKill', data);
             io.sockets.socket(display_socket_2).emit('setKill', data);
+
+            io.sockets.socket(display_socket_0).emit('playAudio', { id: socket.id, music: 'scream'});
+        
           });
 
           socket.on('disconnect', function (data) {

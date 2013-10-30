@@ -35,15 +35,29 @@
       var canvas;
       var context;
       var processingInstance;
-      var scream = document.getElementsByTagName("audio")[0];
-
+      
       var init = function(){
 
-        canvas = document.getElementById("thecanvas");  
-        context = canvas.getContext('2d'); 
-
+        window.AudioContext = window.AudioContext||window.webkitAudioContext;
+        
       };
 
+      var playAudio = function(data){
+
+        // The context is the base for the API.
+        var audioContext = new AudioContext();
+
+        gainNode = audioContext.createGain();
+        gainNode.gain.value = .1;
+
+        var audiotoplay = document.getElementById(data); 
+        var audioSource = audioContext.createMediaElementSource(audiotoplay);
+
+        audioSource.connect(audioContext.destination); // Connect 
+        audiotoplay.play(); 
+      };
+
+      //common socket events -------------------------------------------
       socket.on('connect', function(){
         id = socket.socket.sessionid;
         console.log("Connected : " + socket.socket.sessionid);
@@ -62,6 +76,11 @@
         }else if(data.uType == 'user'){
             userInit();
         }
+
+      });
+
+      socket.on('playAudio', function (data){
+        playAudio(data.music);
 
       });
 
@@ -118,7 +137,7 @@
 
           userObjs.push(userObj);
         
-          var pjs = Processing.getInstanceById("thecanvas");          
+          var pjs = Processing.getInstanceById("thecanvas");     
           pjs.addParticle(userObj.objectID, userObj.character);
         }
       });
@@ -126,6 +145,9 @@
       //display socket part--------------------------------------------------------------------
 
       var displayCanvas = function(){
+
+        canvas = document.getElementById("thecanvas");  
+        context = canvas.getContext('2d');  
         canvas.style.display = "inline";
       };      
 
@@ -140,8 +162,9 @@
         //pjs.addParticle(data.uid, "hand");
 
       };
-      var moveController = function(){
-          move();
+      var moveController = function(data){
+        var pjs = Processing.getInstanceById("thecanvas");
+        pjs.moveHand(data);
       };
 
       var setKillSection = function (data) {
@@ -170,7 +193,7 @@
                displayText3 = "BOOM!!"
           }
 
-          //scream.play();
+          //playAudio("scream");
 
           for(var i = 0 ; i < deathnote.length; i++){
             removeUser(deathnote[i]);
@@ -264,18 +287,13 @@
   </head>
   <body onload = "init();">
 
-    <audio id = "scream">
-        <source src = 'http://itp.nyu.edu/~jyp323/ju/wp-content/uploads/2013/10/180350__jorickhoofd__scream-noooh.wav' type= 'audio/wav'>
+    <audio loop id = "scream">
+        <source src = "http://itp.nyu.edu/~jyp323/ju/wp-content/uploads/2013/10/180350__jorickhoofd__scream-noooh.wav" type = "audio/wav">
     </audio>
- 
-    <div class = "container" id = "gui" style = "display:none">        
-        <div id = "debug"><h3>Choose a land of survival!</h3></div>
-        <button id="red" onclick= "sendbtn(1);"></button>
-        <br/>
-        <button id="yellow" onclick= "sendbtn(2);"></button>
-        <br/>
-        <button id="purple" onclick= "sendbtn(3);"></button>
-    </div>
+    <audio id = "bgm">
+       <source src ="http://itp.nyu.edu/~jyp323/ju/wp-content/uploads/2013/10/Tetris-8-bit-Music-Tetris-Theme-Song.mp3" type = "audio/mp3">
+    </audio>
+
     <div class = "container" id = "controllerGUI" style = "display:none">
         <div id = "debug"><h3>These buttons are for moving</h3></div>
         <button id="red" onclick= "sendbtn(1);"></button>
@@ -294,6 +312,15 @@
         <h3 id = "command">Put your ID on the name card!</h3>
         <input id="username" type="text" placeholder="ex)Obama" />
         <input type="submit" id="btnSubmit" class="btn" value="Submit" onclick = "nameCheck();"/>
+    </div>
+
+    <div class = "container" id = "gui" style = "display:none">        
+        <div id = "debug"><h3>Choose a land of survival!</h3></div>
+        <button id="red" onclick= "sendbtn(1);"></button>
+        <br/>
+        <button id="yellow" onclick= "sendbtn(2);"></button>
+        <br/>
+        <button id="purple" onclick= "sendbtn(3);"></button>
     </div>
     
     <canvas id = "thecanvas" style = "display:none" data-processing-sources="/pjs/display.pde"></canvas>
