@@ -157,12 +157,13 @@
             if(userInput == nameList[i]){
               isAssigned = true;
             }
-            if(isAssigned){
-              nameCheck_success(userInput);
-            }else{
-              nameCheck_failure();
-            }
           }
+          if(isAssigned){
+              nameCheck_success(userInput);
+          }else{
+              nameCheck_failure();
+          }
+
       };
 
       function removeSpaces(string) {

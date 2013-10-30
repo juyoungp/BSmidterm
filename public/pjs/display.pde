@@ -33,8 +33,8 @@
   Boolean moveToSec3 = false;
   ArrayList<String> namelist;
   ArrayList<Particle> particles;
-  PImage obamaP, stevejobsP, ladygagaP, danielshiffmanP, nickiminajP, spongebobP, img6, img7, img8, img9, stevejobs0; 
-  
+  PImage obamaP, stevejobsP, ladygagaP, danielshiffmanP, nickiminajP, spongebobP, marilynmonroeP, img7, img8, img9, stevejobs0; 
+  PImage hand;
   void setup() {
     size(11520, 1080);
     //frameRate(50);
@@ -53,7 +53,8 @@
     danielshiffmanP = loadImage("http://itp.nyu.edu/~jj1357/characters/danielshiffmanF.jpg");
     nickiminajP = loadImage("http://itp.nyu.edu/~jj1357/characters/nickiminajF.jpg");
     spongebobP = loadImage("http://itp.nyu.edu/~jj1357/characters/spongebobF.jpg");
-    img6 = loadImage("http://itp.nyu.edu/~jj1357/characters/spongebobF.jpg");
+    marilynmonroeP = loadImage("http://itp.nyu.edu/~jj1357/characters/marilynmonroeF.jpg");
+    hand = loadImage("http://itp.nyu.edu/~jj1357/characters/hand-shadow.png");
 
     displayText1 = "bit.ly/chooseordie";
     displayText2 = "bit.ly/chooseordie";
@@ -63,10 +64,18 @@
     
     }
 
+  void displayHand(String id){
+
+     userMap.put(id, 99999);
+     
+
+
+  }  
+
   void addParticle(String id, String characterName) {
 
    //Vec2D randLoc = Vec2D.randomVector().scale(5).addSelf(width / 2, height/2);
-   PVector randLoc = new PVector(random(200, width-200), height/2);
+   PVector randLoc = new PVector(width/2, height/2);
    //VerletParticle2D p = new VerletParticle2D(randLoc, 30);
    //float randx = random(200, width-200);
    //PVector p = new PVector(randLoc.x, 30);
@@ -278,6 +287,9 @@
         
       } else if(name.equals("spongebob") == true){
         return spongebobP;
+      
+      } else if(name.equals("marilynmonroe") == true){
+        return marilynmonroeP;
       } 
 
   }

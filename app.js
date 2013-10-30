@@ -120,7 +120,7 @@ io.sockets.on('connection',
 
           socket.on('character', function (data) {
 
-            console.log('character',data);
+            //console.log('character',data);
             io.sockets.socket(display_socket_0).emit('character', data);
             io.sockets.socket(display_socket_1).emit('character', data);
             io.sockets.socket(display_socket_2).emit('character', data);
