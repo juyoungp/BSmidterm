@@ -7,8 +7,8 @@ var express = require('express');
 var http = require('http');
 var path = require('path');
 var WebSocketServer = require('ws').Server;
-var port = process.env.PORT || 5000;
-//var port = 8080;
+//var port = process.env.PORT || 5000;
+var port = 8080;
 
 
 // the ExpressJS App
@@ -23,7 +23,7 @@ app.use(express.static(__dirname + '/'));
 
 httpServer.listen(port);
 
-console.log('http server listening on %d', port);
+//console.log('http server listening on %d', port);
 
 app.configure('development', function(){
   app.use(express.errorHandler());
@@ -32,8 +32,8 @@ app.configure('development', function(){
 
 app.post('/', function(req, res) {
   
-  console.log("received form submission");
-  console.log(req.body);
+  //console.log("received form submission");
+  //console.log(req.body);
 });
 
 
@@ -54,12 +54,12 @@ io.sockets.on('connection',
   
     //console.log("We have a new mobile client: " + socket.id);
     users[users.length] = socket.id;
-    console.log("connected: "+socket.id);
+    //console.log("connected: "+socket.id);
     //Set a Java client as a display_socket
     
     if(users.length < 4){
       socket.set('id','display_socket_'+ (users.length-1), function(){
-        console.log("Dispaly canvas " + (users.length-1) + " is connected");
+        //console.log("Dispaly canvas " + (users.length-1) + " is connected");
         display_socket_0 = users[0];
         display_socket_1 = users[1];
         display_socket_2 = users[2];
@@ -71,7 +71,7 @@ io.sockets.on('connection',
       });
     }else if(users.length == 4){
        socket.set('id','controller', function(){
-        console.log("Controller is connected : "+socket.id);
+        //console.log("Controller is connected : "+socket.id);
         controller = users[3];
         io.sockets.socket(controller).emit('news', { uid: socket.id, index: users.length-1, uType: 'controller'});
         io.sockets.socket(display_socket_0).emit('playAudio', {music: 'bgm'});
@@ -80,7 +80,7 @@ io.sockets.on('connection',
       });
     }else if(users.length >= 5){
       socket.set('id', 'user', function(){
-          console.log("user : "+ (users.length-4));
+          //console.log("user : "+ (users.length-4));
           socket.emit('news', { uid: socket.id, index: users.length-1, uType: 'user'});         
     
       }); 
@@ -104,18 +104,37 @@ io.sockets.on('connection',
 
           socket.on('message', function (data) {
 
-            console.log('message',data);
+            //console.log('message',data);
 
           });
    
           socket.on('button', function (data) {
 
-            console.log('button',data);
+            //console.log('button',data);
             io.sockets.socket(display_socket_0).emit('button', data);
             io.sockets.socket(display_socket_1).emit('button', data);
             io.sockets.socket(display_socket_2).emit('button', data);
   
           });
+
+          socket.on('target', function (data) {
+
+            //console.log('target', data);
+            io.sockets.socket(display_socket_0).emit('targettoall', data);
+            io.sockets.socket(display_socket_1).emit('targettoall', data);
+            io.sockets.socket(display_socket_2).emit('targettoall', data);
+  
+          });
+
+          socket.on('targetH', function (data) {
+
+            //console.log('targetH', data);
+            io.sockets.socket(display_socket_0).emit('targetHtoall', data);
+            io.sockets.socket(display_socket_1).emit('targetHtoall', data);
+            io.sockets.socket(display_socket_2).emit('targetHtoall', data);
+  
+          });
+
 
           socket.on('character', function (data) {
 
@@ -137,7 +156,7 @@ io.sockets.on('connection',
             io.sockets.socket(display_socket_1).emit('setKill', data);
             io.sockets.socket(display_socket_2).emit('setKill', data);
 
-            io.sockets.socket(display_socket_0).emit('playAudio', { id: socket.id, music: 'scream'});
+            io.sockets.socket(controller).emit('playAudio', { id: socket.id, music: 'scream'});
         
           });
 

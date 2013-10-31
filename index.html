@@ -11,8 +11,8 @@
     <script src="/socket.io/socket.io.js"></script>  
     <script>
 
-      var socket = io.connect('http://localhost:5000/');
-      //var socket = io.connect('http://ec2-54-200-79-16.us-west-2.compute.amazonaws.com:8080/');
+      //var socket = io.connect('http://localhost:5000/');
+      var socket = io.connect('http://ec2-54-200-79-16.us-west-2.compute.amazonaws.com:8080/');
 
       var id;
       var index; 
@@ -60,11 +60,11 @@
       //common socket events -------------------------------------------
       socket.on('connect', function(){
         id = socket.socket.sessionid;
-        console.log("Connected : " + socket.socket.sessionid);
+        //console.log("Connected : " + socket.socket.sessionid);
       });
 
       socket.on('news', function (data) {
-        console.log(data);
+        //console.log(data);
            
         type = data.uType;
 
@@ -97,6 +97,20 @@
           }
       });
 
+      socket.on('targettoall', function(data){
+
+        var pjs = Processing.getInstanceById("thecanvas");     
+        pjs.getTarget(data.x, data.y);
+ 
+
+      });
+
+      socket.on('targetHtoall', function(data){
+        var pjs = Processing.getInstanceById("thecanvas");     
+        //pjs.getTargetH(data.x, data.y);
+        pjs.moveHand(data.x, data.y);
+      });
+
       socket.on('button', function (data) {
 
        for(var i = 0 ; i < userObjs.length; i++){
@@ -119,9 +133,9 @@
 
       socket.on('character', function (data){
 
-        console.log("in socket/character " + data.id + " , " + data.character);
+        //console.log("in socket/character " + data.id + " , " + data.character);
         if(data.character == "hand"){
-          console.log("controller process is on!");
+          //console.log("controller process is on!");
           var pjs = Processing.getInstanceById("thecanvas");   
           pjs.addParticle(data.id, data.character);    
 
@@ -154,7 +168,7 @@
       //controller socket part-----------------------------------------------------------------
 
       var displayController = function(data){
-        console.log("I'm the controller!");
+        //console.log("I'm the controller!");
         document.getElementById("controllerGUI").style.display = "inline"; 
 
         socket.emit('character', { id: id, character: "hand" }); 
@@ -163,8 +177,58 @@
 
       };
       var moveController = function(data){
-        var pjs = Processing.getInstanceById("thecanvas");
-        pjs.moveHand(data);
+
+        if(data == 1){
+          handTarget1();
+        } else if(data == 2){
+          handTarget2();
+        } else if(data == 3){
+          handTarget3();
+        }
+
+        
+      };
+
+      var handTarget1 = function(){
+        //var targetx = (Math.random()*3640);
+        //targetH = new PVector(random(0, 2140), random(0, height/2));
+        var targetx = Math.random() * (2140 - 0) + 0;
+        var targety = (Math.random()*480);
+        if(targetx != null || targety != null){
+          socket.emit("targetH", {x:targetx, y:targety});
+        }
+
+
+      };
+
+      var handTarget2 = function(){
+        //targetH = new PVector(random(3840, 4280), random(0, height/2));
+        var targetx = Math.random() * (7280 - 3840) + 3840;
+        var targety = (Math.random()*480);
+        if(targetx != null || targety != null){
+          socket.emit("targetH", {x:targetx, y:targety});
+        }
+      };
+
+      var handTarget3 = function(){
+        //targetH = new PVector(random(7680, 10120), random(0, height/2));
+        var targetx = Math.random() * (10120 - 7680) + 7680;
+        var targety = (Math.random()*480);
+        if(targetx != null || targety != null){
+          socket.emit("targetH", {x:targetx, y:targety});
+        }
+
+       };
+
+
+      var removeUser = function(data){
+        for(var i = 0 ; i < userObjs.length ; i++){
+          if(userObjs[i].objectID == data){
+              userObjs.splice(i,1);         
+              var pjs = Processing.getInstanceById("thecanvas");          
+              pjs.removeUsers(data);
+          }
+        }
       };
 
       var setKillSection = function (data) {
@@ -172,19 +236,24 @@
       };
       var checkKillSection = function( data ){
 
-        console.log("setKillSection : " +data +","+userObjs.length);
+        //console.log("setKillSection : " +data +","+userObjs.length);
         for(var i = 0 ; i < userObjs.length; i++){
           //console.log("user's sectionID : "+userObjs[i].sectionID);
           if(userObjs[i].sectionID == data){
               deathnote.push(userObjs[i].objectID);  
-            console.log("You will be killed: " + userObjs[i].sectionID);
+            //console.log("You will be killed: " + userObjs[i].sectionID);
             deathland = data;
             } 
           kill(deathland);
           deathnote = [];
         }   
+
+        var pjs = Processing.getInstanceById("thecanvas");          
+        pjs.getKillSection(data);
+
       };
       var kill = function (sectionID){
+        /*
           if(sectionID == 1){
                displayText1 = "BOOM!!"
           }else if(sectionID == 2){
@@ -192,13 +261,16 @@
           }else if(sectionID == 3){
                displayText3 = "BOOM!!"
           }
+        */
+
+
 
           //playAudio("scream");
 
           for(var i = 0 ; i < deathnote.length; i++){
             removeUser(deathnote[i]);
             socket.emit('kill',deathnote[i]);
-            console.log("deathnote : "+ deathnote[i]);
+            //console.log("deathnote : "+ deathnote[i]);
 
           }
           setInterval(function(){
@@ -220,8 +292,25 @@
         {name: "danielshiffman", url: "http://itp.nyu.edu/~jj1357/characters/danielshiffmanF.jpg"},
         {name: "nickiminaj", url: "http://itp.nyu.edu/~jj1357/characters/nickiminajF.jpg"},
         {name: "spongebob", url: "http://itp.nyu.edu/~jj1357/characters/spongebobF.jpg"},
-        {name: "marilynmonroe", url: "http://itp.nyu.edu/~jj1357/characters/marilynmonroeF.jpg"}
-      ];
+        {name: "marilynmonroe", url: "http://itp.nyu.edu/~jj1357/characters/marilynmonroeF.jpg"},
+        {name: "michaeljackson", url: "http://itp.nyu.edu/~jyp323/ju/wp-content/uploads/2013/10/michaeljacksonF.jpg"},
+        {name: "katyperry", url: "http://itp.nyu.edu/~jyp323/ju/wp-content/uploads/2013/10/katyperryF.jpg"},
+        {name: "harrypotter", url: "http://itp.nyu.edu/~jyp323/ju/wp-content/uploads/2013/10/harrypotterF.jpg"},
+        {name: "mimi", url: "http://itp.nyu.edu/~jyp323/ju/wp-content/uploads/2013/10/mimiF.jpg"},
+        {name: "jacksparrow", url: "http://itp.nyu.edu/~jyp323/ju/wp-content/uploads/2013/10/jacksparrowF.jpg"},
+        {name: "conan", url: "http://itp.nyu.edu/~jyp323/ju/wp-content/uploads/2013/10/conanF.jpg"},
+        {name: "hitler", url: "http://itp.nyu.edu/~jyp323/ju/wp-content/uploads/2013/10/hitlerF.jpg"},
+        {name: "johnlennon", url: "http://itp.nyu.edu/~jyp323/ju/wp-content/uploads/2013/10/johnlennonF.jpg"},
+        {name: "homersimpson", url: "http://itp.nyu.edu/~jyp323/ju/wp-content/uploads/2013/10/homersimpsonF.jpg"},
+        {name: "wario", url: "http://itp.nyu.edu/~jyp323/ju/wp-content/uploads/2013/10/warioF.jpg"},
+        {name: "mario", url: "http://itp.nyu.edu/~jyp323/ju/wp-content/uploads/2013/10/marioF.jpg"},
+        {name: "superman", url: "http://itp.nyu.edu/~jyp323/ju/wp-content/uploads/2013/10/supermanF.jpg"},
+        {name: "batman", url: "http://itp.nyu.edu/~jyp323/ju/wp-content/uploads/2013/10/batmanF.jpg"},
+        {name: "spiderman", url: "http://itp.nyu.edu/~jyp323/ju/wp-content/uploads/2013/10/spidermanF.jpg"},
+        {name: "ironman", url: "http://itp.nyu.edu/~jyp323/ju/wp-content/uploads/2013/10/ironmanF.jpg"}
+
+        ];
+
 
       var isAssigned = false;
 
@@ -267,7 +356,7 @@
             if(data == nameList[i].name){
                document.getElementById("idphoto").setAttribute("src",nameList[i].url);
                var temptString = "Hey, "+nameList[i].name+"! Run away!!";
-               console.log(temptString);
+               //console.log(temptString);
                document.getElementById("greeting").innerHTML = temptString;
             
             }
@@ -291,18 +380,51 @@
              objectID : data.id,
              sectionID : data.button,
         };
-        var pjs = Processing.getInstanceById("thecanvas");          
-        pjs.setSection(choice.objectID, choice.sectionID);
-      };
-      var removeUser = function(data){
-        for(var i = 0 ; i < userObjs.length ; i++){
-          if(userObjs[i].objectID == data){
-              userObjs.splice(i,1);         
-              var pjs = Processing.getInstanceById("thecanvas");          
-              pjs.removeUsers(data);
-          }
+
+        if(choice.sectionID == 1){
+          target1list();
+        } else if(choice.sectionID == 2){
+          target2list();
+        } else if(choice.sectionID == 3){
+          target3list();
         }
+        var pjs = Processing.getInstanceById("thecanvas");          
+        pjs.setSection(choice.objectID, data.sectionID);
       };
+
+      var target1list = function(){
+        //var targetx = (Math.random()*3640);
+        var targetx = Math.random() * (2700 - 2109) + 2109;
+        var targety = (Math.random()*780);
+        if(targetx != null || targety != null){
+          socket.emit("target", {x:targetx, y:targety});
+        }
+
+      };
+
+      var target2list = function(){
+        //var targetx = ((Math.random()*7480)+3840);
+        var targetx = Math.random() * (6900 - 5950) + 5950;
+        var targety = (Math.random()*780);
+
+        if(targetx != null || targety != null){
+          socket.emit("target", {x:targetx, y:targety});
+        }
+
+      };
+
+      var target3list = function(){
+        //var targetx = ((Math.random()*9520)+7680);
+        var targetx = Math.random() * (10300 - 9600) + 9600;
+        var targety = (Math.random()*780);
+
+        if(targetx != null || targety != null){
+          socket.emit("target", {x:targetx, y:targety});
+        }
+
+      };
+
+
 
     </script>
   </head>
