@@ -11,8 +11,9 @@
     <script src="/socket.io/socket.io.js"></script>  
     <script>
 
-      //var socket = io.connect('http://localhost:5000/');
-      var socket = io.connect('http://ec2-54-200-79-16.us-west-2.compute.amazonaws.com:8080/');
+      var socket = io.connect('http://ec2-54-200-42-18.us-west-2.compute.amazonaws.com
+:8080');
+      //var socket = io.connect('http://ec2-54-200-79-16.us-west-2.compute.amazonaws.com:8080/');
 
       var id;
       var index; 
@@ -85,7 +86,7 @@
       });
 
       socket.on('disconnect', function (data){
-        removeUser(data);
+        //removeUser(data);
       });
 
       socket.on('message', function (data){
@@ -219,7 +220,7 @@
         }
 
        };
-
+       /*
 
       var removeUser = function(data){
         for(var i = 0 ; i < userObjs.length ; i++){
@@ -230,11 +231,12 @@
           }
         }
       };
-
+      */
       var setKillSection = function (data) {
         socket.emit('setKill', { uType: "controller", sectionID: data });
       };
       var checkKillSection = function( data ){
+        /*
 
         //console.log("setKillSection : " +data +","+userObjs.length);
         for(var i = 0 ; i < userObjs.length; i++){
@@ -247,7 +249,7 @@
           kill(deathland);
           deathnote = [];
         }   
-
+        */
         var pjs = Processing.getInstanceById("thecanvas");          
         pjs.getKillSection(data);
 
@@ -263,7 +265,7 @@
           }
         */
 
-
+        /*
 
           //playAudio("scream");
 
@@ -278,6 +280,7 @@
                 displayText2 = "bit.ly/chooseordie";
                 displayText3 = "bit.ly/chooseordie";
           }, 1000);
+        */
       };
 
       //user socket part-----------------------------------------------------------------------

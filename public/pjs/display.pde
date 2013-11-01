@@ -19,6 +19,7 @@
   ArrayList<String> namelist;
   ArrayList<Particle> particles;
   ArrayList<PVector> target1list;
+  ArrayList<String> idlist;
   PImage bg, kill1, kill2, kill3, obamaP, stevejobsP, ladygagaP, danielshiffmanP, nickiminajP,spongebobP, marilynmonroeP, handP, michaeljacksonP, katyperryP, harrypotterP, mimiP, jacksparrowP, conanP, hitlerP, johnlennonP, homersimpsonP, warioP, marioP, supermanP, batmanP, spidermanP, ironmanP;
 
   void setup() {
@@ -31,8 +32,9 @@
     namelist = new ArrayList<String>();
     particles = new ArrayList<Particle>();
     target1list = new ArrayList<PVector>();
+    idlist = new ArrayList<PVector>();
 
-    bg = loadImage("http://itp.nyu.edu/~jyp323/ju/wp-content/uploads/2013/10/bgimage1.jpg");
+    bg = loadImage("http://itp.nyu.edu/~jj1357/bigscreenImg/bgimgwithculumn.jpg");
     kill1 = loadImage("http://itp.nyu.edu/~jj1357/bigscreenImg/kill1.png");
     kill2 = loadImage("http://itp.nyu.edu/~jj1357/bigscreenImg/kill2.png");
     kill3 = loadImage("http://itp.nyu.edu/~jj1357/bigscreenImg/kill3.png");
@@ -78,15 +80,7 @@
 
 
   }
-  /*
-  void getTargetH(float x, float y){
-    if(x != null || y != null){
-    
-      targetH = new PVector(x, y);
-      console.log(targetH.x, targetH.y);
-    }
-  }
-  */
+
 
   void getKillSection(int sectionID){
     if(sectionID == 1){
@@ -118,6 +112,7 @@
 
       particles.add(new Particle(random(3840, 7680), height/2));
       userMap.put(id, (particles.size()));
+      idlist.add(id);
       namelist.add(characterName);
 
     }
@@ -138,32 +133,7 @@
            //console.log(tempIndex-1);
         }
      }
-/*
-      if(sectionID == 1){
 
-          //charMoving = true;
-          //moveToSec1 = true;
-          //moveToSec2 = false;
-          //moveToSec3 = false;
-
-
-      } else if(sectionID == 2){
-        //charMoving = true;
-
-          //moveToSec1 = false;
-          //moveToSec2 = true;
-          //moveToSec3 = false;
-
-      } else if(sectionID == 3){
-        //charMoving = true;
-
-          //moveToSec1 = false;
-          //moveToSec2 = false;
-          //moveToSec3 = true;
-
-
-      } 
-      */
   
   }
 
@@ -172,35 +142,16 @@
     image(bg, 0, 0);
 
     if(kill1==true){
-      image(kill1, 0, 0);
+      //image(kill1, 0, 0);
+      removeUsers(1);
     } else if(kill2 ==true){
-      image(kill2, 0, 0);
+      //image(kill2, 0, 0);
+      removeUsers(2);
     } else if(kill3 == true){
-      image(kill3, 0, 0);
+      //image(kill3, 0, 0);
+      removeUsers(3);
     }
-    /*
-    noStroke();
-    fill(255);
-
-    textMode(CENTER);
-    //fill(140,21,15);
-    //rect(0, 0, 3840, height);
-    fill(255,80);
-    textSize(100);
-    text(displayText1, width / 12 - textWidth(displayText1) / 2, height/2);
-    //fill(255, 204, 0);
-    //rect(3840, 0, 7680, height);
-    fill(255,80);
-    textSize(100);
-    text(displayText2, width*5 / 12 - textWidth(displayText2) / 2, height/2);
-    fill(102, 0, 102);
-    rect(7680, 0, 11520, height);
-    fill(255,80);
-    textSize(100);
-    text(displayText3, width*9/12 - textWidth(displayText3) / 2, height/2);
-    */
-
-
+   
     i = userMap.entrySet().iterator();  // Get an iterator
 
     while (i.hasNext()) {
@@ -214,13 +165,7 @@
     if(charMoving){
       particles.get(tempIndex-1).move(target.x, target.y);
     } 
-/*
-    else if (moveToSec2){
-      particles.get(tempIndex-1).move(target.x, target.y);
-    } else if(moveToSec3){
-      particles.get(tempIndex-1).move(target.x, target.y);
-    }
-*/
+
     if(controllerOn){
       displayHand();
 
@@ -308,7 +253,6 @@
 */
   }
 
-  //void moveHand(int sectionID){
   void moveHand(float x, float y){
     moving = true;
 
@@ -318,35 +262,7 @@
       console.log(targetH.x, targetH.y);
     }
 
-/*
-    if(sectionID == 1){
-      
-      moveHand1 = true;
-      moveHand2 = false;
-      moceHand3 = false;
-      //console.log("hand push 1");
 
-    }
-
-    if(sectionID == 2){
-      
-      moveHand2 = true;
-      moveHand1 = false;
-      moveHand3 = false;
-      //console.log("hand push 2");
-
-    }
-
-    if(sectionID == 3){
-      
-      moveHand3 = true;
-      moveHand1 = false;
-      moveHand2 = false;
-      //console.log("hand push 3");
-    }
-
-  }
-*/
 }
   void drawUsers(int index){
 
@@ -361,17 +277,31 @@
 
   }
 
-  void removeUsers(String id){
+  void removeUsers(int s){
 
     //console.log(id + "is removed.");
 
+    if(s == 1){
+      for(int j = 0; j<particles.size(); j++){
+        if(particles.get(j).getX()>=2109 && particles.get(j).getX()<=2700 && particles.get(j).getY()>=0 && particles.get(j).getY()<=780){
+          deleteUser(j);
+        }
+      }
+    }
+
+    
+  }
+
+  void deleteUser(int j){
     i = userMap.entrySet().iterator();  // Get an iterator
-    while (i.hasNext()) {
+      while (i.hasNext()) {
         Map.Entry me = (Map.Entry)i.next();
-        if (me.getKey() == id) {
+        if (me.getKey() == idlist.get(j)) {
            i.remove();
         }
     }
+
+
   }
 
   PImage getCharImage(String name){
@@ -462,8 +392,7 @@ class Particle{
   Particle(float x, float y){
     loc_x = x;
     loc_y = y;
-    //tx = _tx;
-    //ty = _ty;
+
   }
 
 
